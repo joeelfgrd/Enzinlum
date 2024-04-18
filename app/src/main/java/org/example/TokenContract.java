@@ -108,13 +108,11 @@ public class TokenContract {
             this.getBalances().put(recipient, balanceOf(recipient) + units);
         } catch (IllegalArgumentException e) {
             StringBuilder sb = new StringBuilder();
-            sb.append("Error: No se ha podido realizar la transferencia de ");
-            sb.append(units);
-            sb.append(" a ");
-            sb.append(recipient.hashCode());
-            sb.append(" por falta de créditos");
-
+            sb.append(e.getMessage());
+            sb.append(": No hay suficientes creditos para comprar las entradas\n");
             System.out.println(sb.toString());
+
+            
     };
 }
 
@@ -123,14 +121,17 @@ public class TokenContract {
             require(balanceOf(sender) >= units);
             this.getBalances().put(sender, balanceOf(sender) - units);
             this.getBalances().put(recipient, balanceOf(recipient) + units);
-        } catch (Exception e) {
-          
+        } catch (IllegalArgumentException e) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(e.getMessage());
+            sb.append(": No es posible comprar \n");
+            System.out.println(sb.toString());
         }   
     }
 
     private void require(Boolean holds) throws IllegalArgumentException {
         if (! holds) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Ha ocurrido un error");
         }
     }
 
