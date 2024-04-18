@@ -106,12 +106,17 @@ public class TokenContract {
             require(balanceOf(ownerPK) >= units);
             this.getBalances().compute(ownerPK, (pk, tokens) -> tokens - units);
             this.getBalances().put(recipient, balanceOf(recipient) + units);
-        } catch (Exception e) {
-            System.out.println(
-                "Error: No se ha podido realizar la transferencia de " + units + " a " + recipient.hashCode() + "por falta de creditos"
-            );
-        }      
+        } catch (IllegalArgumentException e) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Error: No se ha podido realizar la transferencia de ");
+            sb.append(units);
+            sb.append(" a ");
+            sb.append(recipient.hashCode());
+            sb.append(" por falta de créditos");
+
+            System.out.println(sb.toString());
     };
+}
 
     public void transfer(PublicKey sender, PublicKey recipient, Double units) {
         try {
@@ -119,13 +124,13 @@ public class TokenContract {
             this.getBalances().put(sender, balanceOf(sender) - units);
             this.getBalances().put(recipient, balanceOf(recipient) + units);
         } catch (Exception e) {
-            // fails silently
+          
         }   
     }
 
-    private void require(Boolean holds) throws Exception {
+    private void require(Boolean holds) throws IllegalArgumentException {
         if (! holds) {
-            throw new Exception();
+            throw new IllegalArgumentException();
         }
     }
 
